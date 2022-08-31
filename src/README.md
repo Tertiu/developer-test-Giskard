@@ -1,0 +1,1 @@
+pyinstaller -F -n "give-me-the-odds" --clean cli.py

@@ -15,12 +15,6 @@ def repair_path(path1, path2):
         abs_path1 = os.path.abspath(os.path.dirname(path1))
         return os.path.join(abs_path1, path2)
 
-def repair_arc(arc):
-    if arc[0] <= arc[1]:
-        return (arc[0], arc[1])
-    else:
-        return (arc[1], arc[0])
-
 def processDB(path):
     con = sqlite3.connect(path)
     cur = con.cursor()
@@ -29,6 +23,7 @@ def processDB(path):
     for row in res:
         s, d, w = row
         result[(s, d)] = w
+    con.close()
     return result
         
 def printRoutes(routes):
@@ -94,9 +89,9 @@ class LinkedList:
         if self.head == None:
             return None
         else:
-            tmp = self.head
+            data = self.head.data
             self.head = self.head.next
-            return tmp.data
+            return data
         
     def compare_insert(self, data, comparator):
         if self.head is None:
@@ -104,14 +99,17 @@ class LinkedList:
         else:
             self.head.compare_insert(data, comparator)
 
-def processEmpire(path):
-    empire = read_json(path)
+def processEmpire_bis(empire):
     hunters_planning = {}
     for plan in empire["bounty_hunters"]:
         l = hunters_planning.get(plan["day"], [])
         l.append(plan["planet"])
         hunters_planning[plan["day"]] = l
     return (empire["countdown"], hunters_planning)
+
+def processEmpire(path):
+    empire = read_json(path)
+    return processEmpire_bis(empire)
 
 def compare(data1, data2):
     (current_k, current_fuel, current_day, current_path) = data1
@@ -153,8 +151,13 @@ def process_a_star(routes, src, dst, autonomy, countdown, hunters_planning):
                 tasks.compare_insert(( (current_k + 1) if dst2 in hunters_planning.get(current_day + cost, []) else current_k, current_fuel - cost, current_day + cost, current_path + [dst2]), compare)
     return None
         
-        
-
+def compute_proba(k):
+    if k == 0:
+        return 0
+    res = 1/10
+    for i in range(2, k+1):
+        res += 9/(10**i)
+    return res
 
 ##Test
 if __name__ == "__main__":

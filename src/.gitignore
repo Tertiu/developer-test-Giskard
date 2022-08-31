@@ -1,0 +1,8 @@
+*
+
+!kernel
+!requirements.txt
+!README.md
+!.gitignore
+!cli.py
+!server
