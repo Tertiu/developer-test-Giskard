@@ -1,8 +1,6 @@
 *
 
-!static/*.jpg
-!static/*.css
-!static/*.js
-!templates/*.html
+!/static
+!/templates
 !__init__.py
 !flash-server.py
