@@ -1,1 +1,6 @@
-logs
+*
+
+!static
+!templates
+!__init__.py
+!flash-server.py
