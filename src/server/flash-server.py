@@ -3,7 +3,12 @@ sys.path.append('..')
 from kernel import lib
 import argparse
 
-# Verification
+#Config
+ip = "127.0.0.1"
+port = 8080
+
+
+#Millennium file
 parser = argparse.ArgumentParser()
 parser.add_argument("falcon_file", help="path to millennium-falcon.json", type=str)
 args = parser.parse_args()
@@ -19,6 +24,7 @@ from flask import Flask, render_template, request, make_response
 from flask.logging import default_handler
 import logging
 from logging.config import dictConfig
+from gevent.pywsgi import WSGIServer, LoggingLogAdapter
 
 class RequestFormatter(logging.Formatter):
     def format(self, record):
@@ -49,7 +55,6 @@ dictConfig({
         'formatter': 'default'
     }},
     'root': {
-        'level': 'WARNING',
         'handlers': ['wsgi']
     }
 })
@@ -82,7 +87,7 @@ def odds():
     except Exception as e:
         return make_response("cannot read empire file", 403)
 
-ip = "127.0.0.1"
-port = 8080
+
 print("Running on {}:{}".format(ip, port))
-app.run(host=ip, port=port, threaded=True)
+http_server = WSGIServer((ip, port), app, log=LoggingLogAdapter(app.logger, logging.WARNING))
+http_server.serve_forever()

@@ -138,8 +138,7 @@ def process_a_star(routes, src, dst, autonomy, countdown, hunters_planning):
         (current_k, current_fuel, current_day, current_path) = tasks.pop()
         if current_path[-1] == dst:
             return (current_k, current_fuel, current_day, current_path)
-       
-        
+               
         #Refuel solution
         if current_day < countdown:
             tasks.compare_insert((current_k + 1 if current_path[-1] in hunters_planning.get(current_day, []) else current_k, autonomy, current_day + 1, current_path + [current_path[-1]]), compare)
@@ -159,7 +158,6 @@ def compute_proba(k):
         res += 9/(10**i)
     return res
 
-##Test
 if __name__ == "__main__":
     falcon_path = "../../examples/example4/millennium-falcon.json"
     falcon = read_json(falcon_path)

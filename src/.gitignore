@@ -1,8 +1,8 @@
 *
 
-!kernel/
+!kernel/**
 !requirements.txt
 !README.md
-!server/
+!server/**
 !.gitignore
 !cli.py

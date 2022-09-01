@@ -75,7 +75,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
 </div>
 
 
-
 <!-- partial -->
 <script>
 // Get the modal
@@ -89,12 +88,16 @@ var file_input = document.getElementById('fileid');
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
+//var audio = new Audio('/static/dark-side.mp3');
+
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
   document.getElementById('fileid').click();
   //btn.classList.toggle('button--loading')
   //modal.style.display = "block";
 }
+
+
 
 file_input.onchange = function(e) { 
   file = file_input.files[0]
@@ -105,10 +108,35 @@ file_input.onchange = function(e) {
 	formData.append("empire", file);
 	fetch('/odds', {method: "POST", body: formData}).then(response => {
         if (response.ok) {
-            return response.text().then(text => { document.getElementById('odds-txt').innerText = "The odds are " + text; btn.classList.remove('button--loading'); modal.style.display = "block"; file_input.value = null })
+            return response.text().then(
+				text => {
+					var path = '/static/dark-side.mp3'
+					if (text == "0%")
+						path = '/static/roar.mp3'
+					else if (text == "100%")
+						path = '/static/father.mp3'
+					const audio = new Audio(path);
+					audio.onended  = function() { 
+						document.getElementById('odds-txt').innerText = "The odds are " + text; 
+						btn.classList.remove('button--loading'); 
+						modal.style.display = "block"; 
+						file_input.value = null 
+					}
+					audio.play()
+				})
         }
 		else {
-			return response.text().then(text => { document.getElementById('odds-txt').innerText = "An error occured : " + text; btn.classList.remove('button--loading'); modal.style.display = "block"; file_input.value = null;  } )
+			return response.text().then(
+				text => { 
+					const audio2 = new Audio('/static/fail.mp3');
+					audio2.onended  = function() { 
+						document.getElementById('odds-txt').innerText = "An error occured : " + text; 
+						btn.classList.remove('button--loading'); 
+						modal.style.display = "block"; 
+						file_input.value = null 
+					}
+					audio2.play()
+			})
 		}
     });
   }
