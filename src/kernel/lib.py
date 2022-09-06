@@ -111,7 +111,7 @@ def processEmpire(path):
     empire = read_json(path)
     return processEmpire_bis(empire)
 
-def compare(data1, data2):
+def compare(data1, data2): #Used for a_star algorithm
     (current_k, current_fuel, current_day, current_path) = data1
     (current_k2, current_fuel2, current_day2, current_path2) = data2
     if current_k < current_k2:
@@ -131,9 +131,8 @@ def compare(data1, data2):
     else:
         return -1
 
-def process_a_star(routes, src, dst, autonomy, countdown, hunters_planning):
+def process_a_star(routes, src, dst, autonomy, countdown, hunters_planning): #applying a_star algorithm
     tasks = LinkedList(nodes = [((1 if src in hunters_planning.get(0, []) else 0, autonomy, 0, [src]))])
-    #print(tasks)
     while not tasks.is_empty():
         (current_k, current_fuel, current_day, current_path) = tasks.pop()
         if current_path[-1] == dst:
@@ -146,11 +145,11 @@ def process_a_star(routes, src, dst, autonomy, countdown, hunters_planning):
         #other possibilities
         possible_next_steps = extract_outgoing_of(routes, current_path[-1])
         for (dst2, cost) in possible_next_steps:
-            if cost <= current_fuel and current_day + cost <= countdown:
+            if cost <= current_fuel and current_day + cost <= countdown: #Acceptable solution
                 tasks.compare_insert(( (current_k + 1) if dst2 in hunters_planning.get(current_day + cost, []) else current_k, current_fuel - cost, current_day + cost, current_path + [dst2]), compare)
     return None
         
-def compute_proba(k):
+def compute_proba(k): #Computes the failure probability
     if k == 0:
         return 0
     res = 1/10
